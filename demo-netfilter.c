@@ -8,6 +8,7 @@
 #include <linux/udp.h>
 #include <linux/version.h>
 #include <linux/if_ether.h>
+#include <linux/string.h>
 
 static struct nf_hook_ops *nfho = NULL;
 #define GNTAG "[GN-CYF]: " 
@@ -26,13 +27,11 @@ static unsigned int hfunc(void *priv, struct sk_buff *skb, const struct nf_hook_
     /// udph = udp_hdr(skb);
     //ntohs(udph->dest)
 
-
     int src_port ;
 	int dest_port;
 	char src_ip[64];
 	char dest_ip[64];
  
-
 	printk(KERN_INFO GNTAG "id: %d, protocol: %d, ttl: %d",iph->id, iph->protocol,iph->ttl);
 
 	// get port
@@ -63,19 +62,22 @@ static unsigned int hfunc(void *priv, struct sk_buff *skb, const struct nf_hook_
 	src_port,
 	dest_ip,
 	dest_port);
-	
+
 	printk(KERN_INFO GNTAG "src_mac = %x:%x:%x:%x:%x:%x\n",mh->h_source[0],mh->h_source[1],mh->h_source[2],mh->h_source[3],mh->h_source[4],mh->h_source[5]);  
 	printk(KERN_INFO GNTAG "dest_mac = %x:%x:%x:%x:%x:%x\n",mh->h_dest[0],mh->h_dest[1],mh->h_dest[2],mh->h_dest[3],mh->h_dest[4],mh->h_dest[5]);  
 
+	//demo5 chan IP 13.229.188.59 
+	if (strcmp("13.229.188.59",src_ip) == 0)
+		return NF_DROP;
+	else
+	return NF_ACCEPT;
 
-	// chan tat ca cac ket noi
-	return NF_DROP;
+
 }
 
 static int __init  gn_cyf_init(void)
 {
 	nfho = (struct nf_hook_ops*)kcalloc(1, sizeof(struct nf_hook_ops), GFP_KERNEL);
-
 	nfho->hook 	= (nf_hookfn*)hfunc;		
 	nfho->hooknum 	= NF_INET_PRE_ROUTING;	
 	nfho->pf 	= PF_INET;			
