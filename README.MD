@@ -2,16 +2,20 @@
 
 ### BUILD
 ```
-make all
+$ make all
 
 ```
 
 ### Install 
 ```
-make test
+# make test
 ```
 
 ### Unistall
 ```
-make remove
+# make remove
+```
+### View log
+```
+$dmesg
 ```
